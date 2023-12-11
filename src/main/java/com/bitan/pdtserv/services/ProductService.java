@@ -1,13 +1,16 @@
 package com.bitan.pdtserv.services;
 
 import com.bitan.pdtserv.dtos.ProductsDto;
+import com.bitan.pdtserv.models.Product;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 public interface ProductService {
-     String getAllProducts();
-     String getSingleProduct( Long productid);
-     String addNewProduct();
-     String updateProduct( Long productid);
-     String deleteProduct(Long productid);
+     List<Product> getAllProducts();
+     Product getSingleProduct( Long productid);
+     Product addNewProduct(ProductsDto productsDto);
+     Product updateProduct( Long productid,Product product);
+     Boolean deleteProduct(Long productid);
 
 }
