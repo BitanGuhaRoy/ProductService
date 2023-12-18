@@ -1,18 +1,36 @@
 package com.bitan.pdtserv.services;
-
+//import  org.apache.Cli
 import com.bitan.pdtserv.dtos.FakeStoreProductDto;
 import com.bitan.pdtserv.dtos.ProductsDto;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
+import org.springframework.util.Assert;
+import org.springframework.web.client.RequestCallback;
+import org.springframework.web.client.ResponseExtractor;
+import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
+
+import java.net.URI;
+import java.util.Map;
+import java.util.Set;
+
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.RequestEntity;
+import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 //Calling third party API, Fake Store
 @Service
 public class FakeStoreProductImpl implements ProductService{
@@ -22,7 +40,19 @@ public class FakeStoreProductImpl implements ProductService{
     public FakeStoreProductImpl(RestTemplateBuilder restTemplateBuilder) {
         this.restTemplateBuilder = restTemplateBuilder;
     }
+    private static <T> T nonNull(@Nullable T result) {
+        Assert.state(result != null, "No result");
+        return result;
+    }
+    private <T> ResponseEntity<T> requestForEntity(HttpMethod httpMethod,String url, @Nullable Object request,
+                                               Class<T> responseType, Object... uriVariables) throws RestClientException {
+        RestTemplate restTemplate =
+                restTemplateBuilder.requestFactory (HttpComponentsClientHttpRequestFactory.class).build();
 
+        RequestCallback requestCallback = restTemplate.httpEntityCallback(request, responseType);
+        ResponseExtractor<ResponseEntity<T>> responseExtractor = restTemplate.responseEntityExtractor(responseType);
+        return nonNull(restTemplate.execute(url, httpMethod, requestCallback, responseExtractor, uriVariables));
+    }
     @Override
 
     public List<Product> getAllProducts() {
@@ -103,11 +133,41 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
     @Override
     public Product updateProduct(Long productid, Product product) {
 
-        RestTemplate restTemplate = restTemplateBuilder.build();
+//        HttpComponentsClientHttpRequestFactory
+        RestTemplate restTemplate =
+                restTemplateBuilder.requestFactory (HttpComponentsClientHttpRequestFactory.class).build();
 
-      //  restTemplate.patchForObject("")
-//        restTemplate
-        return null;
+//                restTemplateBuilder.build();
+
+
+        FakeStoreProductDto fakeStoreProductDto= new FakeStoreProductDto();
+
+        fakeStoreProductDto.setTitle(product.getTitle());
+        fakeStoreProductDto.setPrice(product.getPrice());
+        fakeStoreProductDto.setId(product.getId());
+        fakeStoreProductDto.setDescription(product.getDescription());
+        fakeStoreProductDto.setImage(product.getImageref());
+        fakeStoreProductDto.setCategory(product.getCategory().getName());
+ResponseEntity<FakeStoreProductDto> fakeStoreProductDtoResponseEntity=
+        requestForEntity(HttpMethod.PATCH,"https://fakestoreapi.com/products/{id}"
+                ,fakeStoreProductDto,FakeStoreProductDto.class,productid );
+
+
+
+        FakeStoreProductDto productsDto = fakeStoreProductDtoResponseEntity.getBody();
+        Product product1= new Product();
+        Category category= new Category();
+
+        category.setName(productsDto.getCategory());
+        product1.setCategory(category);
+        product1.setImageref(productsDto.getImage());
+        product1.setTitle(productsDto.getTitle());
+        product1.setPrice(productsDto.getPrice());
+        product1.setId(productsDto.getId());
+        product1.setDescription(productsDto.getDescription());
+        return product1;
+
+//        return null;
     }
 
     @Override

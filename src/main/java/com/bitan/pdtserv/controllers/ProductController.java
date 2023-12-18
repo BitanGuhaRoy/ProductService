@@ -1,9 +1,7 @@
 package com.bitan.pdtserv.controllers;
 
-import com.bitan.pdtserv.dtos.AddNewProductDto;
-import com.bitan.pdtserv.dtos.GetSingleProductResponseDto;
-import com.bitan.pdtserv.dtos.PostAddNewProductResponseDto;
-import com.bitan.pdtserv.dtos.ProductsDto;
+import com.bitan.pdtserv.dtos.*;
+import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
 import com.bitan.pdtserv.services.ProductService;
 import com.sun.net.httpserver.Authenticator;
@@ -62,11 +60,25 @@ public class ProductController {
         return response;
     }
 
-    @PutMapping("/{productid}")
-    public String updateProduct(@PathVariable("productid") Long productid, @RequestBody ProductsDto productsDto )
+    @PatchMapping ("/{productid}")
+    public ResponseEntity<UpdateProductResponseDto>  updateProduct(@PathVariable("productid") Long productid, @RequestBody ProductsDto productsDto )
     {
 
-        return "putting Product : "+productid +" "+ productsDto;
+        Product product= new Product();
+        product.setCategory(new Category());
+        product.getCategory().setName(productsDto.getCategory());
+        product.setTitle(productsDto.getTitle());
+
+        product.setPrice(productsDto.getPrice());
+        product.setDescription(productsDto.getDescription());
+        Product newproduct = productService.updateProduct(productid, product);
+        UpdateProductResponseDto updateProductResponseDto=
+                new UpdateProductResponseDto();
+        updateProductResponseDto.setProduct(newproduct);
+        ResponseEntity<UpdateProductResponseDto> response =
+                new ResponseEntity<>(updateProductResponseDto,HttpStatus.OK);
+        return response;
+
     }
     @DeleteMapping("/{productid}")
     public String deleteProduct(@PathVariable("productid") Long productid)
