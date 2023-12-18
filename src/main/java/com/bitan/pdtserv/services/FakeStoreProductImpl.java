@@ -1,5 +1,6 @@
 package com.bitan.pdtserv.services;
 
+import com.bitan.pdtserv.dtos.FakeStoreProductDto;
 import com.bitan.pdtserv.dtos.ProductsDto;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
@@ -27,22 +28,23 @@ public class FakeStoreProductImpl implements ProductService{
     public List<Product> getAllProducts() {
 
 RestTemplate restTemplate= restTemplateBuilder.build();
-ResponseEntity<ProductsDto[]> listResponseEntity=
-        restTemplate.getForEntity("https://fakestoreapi.com/products", ProductsDto[].class );
+ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
+        restTemplate.getForEntity("https://fakestoreapi.com/products", FakeStoreProductDto[].class );
+//restTemplate.getForEntity()
   List<Product> answer= new ArrayList<>();
-  for(ProductsDto obj: listResponseEntity.getBody() )
+  for(FakeStoreProductDto obj: listResponseEntity.getBody() )
   {
-      ProductsDto productsDto= (ProductsDto) obj;
+      FakeStoreProductDto fakeStoreProductDto= (FakeStoreProductDto) obj;
       Product product= new Product();
       Category category= new Category();
 
-      category.setName(productsDto.getCategory());
+      category.setName(fakeStoreProductDto.getCategory());
       product.setCategory(category);
-      product.setImageref(productsDto.getImage());
-      product.setTitle(productsDto.getTitle());
-      product.setPrice(productsDto.getPrice());
-      product.setId(productsDto.getId());
-      product.setDescription(productsDto.getDescription());
+      product.setImageref(fakeStoreProductDto.getImage());
+      product.setTitle(fakeStoreProductDto.getTitle());
+      product.setPrice(fakeStoreProductDto.getPrice());
+      product.setId(fakeStoreProductDto.getId());
+      product.setDescription(fakeStoreProductDto.getDescription());
       answer.add(product);
 
   }
@@ -57,21 +59,21 @@ ResponseEntity<ProductsDto[]> listResponseEntity=
 
         RestTemplate restTemplate= restTemplateBuilder.build();
 
-        ResponseEntity<ProductsDto> response=
-                restTemplate.getForEntity("https://fakestoreapi.com/products/{id}", ProductsDto.class,productid);
+        ResponseEntity<FakeStoreProductDto> response=
+                restTemplate.getForEntity("https://fakestoreapi.com/products/{id}", FakeStoreProductDto.class,productid);
          //url, return type,
         Product product= new Product();
-        ProductsDto productsDto = response.getBody();
+        FakeStoreProductDto fakeStoreProductDto = response.getBody();
 
         Category category= new Category();
 
-        category.setName(productsDto.getCategory());
+        category.setName(fakeStoreProductDto.getCategory());
         product.setCategory(category);
-        product.setImageref(productsDto.getImage());
-        product.setTitle(productsDto.getTitle());
-        product.setPrice(productsDto.getPrice());
-        product.setId(productsDto.getId());
-        product.setDescription(productsDto.getDescription());
+        product.setImageref(fakeStoreProductDto.getImage());
+        product.setTitle(fakeStoreProductDto.getTitle());
+        product.setPrice(fakeStoreProductDto.getPrice());
+        product.setId(fakeStoreProductDto.getId());
+        product.setDescription(fakeStoreProductDto.getDescription());
         return product;
     }
 
@@ -79,11 +81,11 @@ ResponseEntity<ProductsDto[]> listResponseEntity=
     public Product addNewProduct(ProductsDto products) {
 //       RestTemplateBuilder restTemplateBuilder1
         RestTemplate restTemplate= restTemplateBuilder.build();
-        ResponseEntity<ProductsDto> response=
-                restTemplate.postForEntity("https://fakestoreapi.com/products",products,ProductsDto.class);
+        ResponseEntity<FakeStoreProductDto> response=
+                restTemplate.postForEntity("https://fakestoreapi.com/products",products,FakeStoreProductDto.class);
 
 
-        ProductsDto productsDto = response.getBody();
+        FakeStoreProductDto productsDto = response.getBody();
         Product product= new Product();
         Category category= new Category();
 
@@ -100,6 +102,11 @@ ResponseEntity<ProductsDto[]> listResponseEntity=
 
     @Override
     public Product updateProduct(Long productid, Product product) {
+
+        RestTemplate restTemplate = restTemplateBuilder.build();
+
+      //  restTemplate.patchForObject("")
+//        restTemplate
         return null;
     }
 
