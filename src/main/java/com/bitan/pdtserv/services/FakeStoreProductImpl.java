@@ -96,7 +96,10 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
         FakeStoreProductDto fakeStoreProductDto = response.getBody();
 
         Category category= new Category();
+        if(fakeStoreProductDto==null)
+        {
 
+        }
         category.setName(fakeStoreProductDto.getCategory());
         product.setCategory(category);
         product.setImageref(fakeStoreProductDto.getImage());
