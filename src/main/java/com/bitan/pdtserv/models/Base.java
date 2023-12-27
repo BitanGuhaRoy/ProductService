@@ -8,6 +8,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.UUID;
+
 @Getter
 @Setter
 @MappedSuperclass
@@ -19,5 +21,6 @@ public class Base {
     private Date lastUpdated;
 
     private  boolean isdeleted;
+
 
 }
