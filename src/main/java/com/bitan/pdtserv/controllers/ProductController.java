@@ -1,5 +1,6 @@
 package com.bitan.pdtserv.controllers;
 
+import com.bitan.pdtserv.Exception.NotFoundException;
 import com.bitan.pdtserv.dtos.*;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
@@ -14,6 +15,7 @@ import org.springframework.web.client.RestTemplate;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
 
 @RestController
 @RequestMapping("/products")
@@ -33,14 +35,17 @@ public class ProductController {
     }
 
     @GetMapping("/{productid}")
-    public ResponseEntity<GetSingleProductResponseDto> getSingleProduct(@PathVariable("productid") Long productid)
-    {
+    public ResponseEntity<GetSingleProductResponseDto> getSingleProduct(@PathVariable("productid") Long productid) throws NotFoundException {
         MultiValueMap<String,String> header= new LinkedMultiValueMap<>();
         header.add("auth-token","Sorry!No access");
         GetSingleProductResponseDto getSingleProductResponseDto= new GetSingleProductResponseDto();
 
-       Product product =  productService.getSingleProduct(productid);
-        getSingleProductResponseDto.setProduct(product);
+       Optional<Product> productoptional =  productService.getSingleProduct(productid);
+       if(productoptional.isEmpty())
+       {
+           throw new NotFoundException("No product exists on this Id");
+       }
+        getSingleProductResponseDto.setProduct(productoptional.get());
        ResponseEntity<GetSingleProductResponseDto> response =
                new ResponseEntity(getSingleProductResponseDto, header,HttpStatus.OK);
 
@@ -85,4 +90,6 @@ public class ProductController {
     {
         return "Deleting One Product : "+ productid;
     }
+
+
 }

@@ -17,12 +17,9 @@ import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestTemplate;
 
 import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import java.net.URI;
-import java.util.Map;
-import java.util.Set;
 
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -83,7 +80,7 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
     }
 
     @Override
-    public Product getSingleProduct(Long productid) {
+    public Optional<Product> getSingleProduct(Long productid) {
 
 //        Product product= new Product();
 
@@ -98,7 +95,7 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
         Category category= new Category();
         if(fakeStoreProductDto==null)
         {
-
+            return Optional.empty();
         }
         category.setName(fakeStoreProductDto.getCategory());
         product.setCategory(category);
@@ -107,7 +104,8 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
         product.setPrice(fakeStoreProductDto.getPrice());
         product.setId(fakeStoreProductDto.getId());
         product.setDescription(fakeStoreProductDto.getDescription());
-        return product;
+        return Optional.of(product);
+//        return product;
     }
 
     @Override
