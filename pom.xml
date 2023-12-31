@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.bitan</groupId>
-    <artifactId>ProductService</artifactId>
+    <artifactId>Pdtserv</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>pdtserv</name>
     <description>pdtserv</description>
