@@ -21,4 +21,5 @@ public class Product extends Base{
     //eager loading
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     private Category category;
+    private Boolean ispublic;
 }
