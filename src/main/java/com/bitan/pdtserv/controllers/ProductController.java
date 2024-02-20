@@ -4,8 +4,13 @@ import com.bitan.pdtserv.Exception.NotFoundException;
 import com.bitan.pdtserv.dtos.*;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
+import com.bitan.pdtserv.repository.CategoryRepository;
+import com.bitan.pdtserv.services.CategoryService;
 import com.bitan.pdtserv.services.ProductService;
+import com.bitan.pdtserv.services.SelfProductService;
 import com.sun.net.httpserver.Authenticator;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.LinkedMultiValueMap;
@@ -21,35 +26,34 @@ import java.util.Optional;
 @RequestMapping("/products")
 public class ProductController {
 
+    @Autowired
+    @Qualifier("selfProductService")
+    // @Qualifier("selfProductService")
+    // selfProductService is giving stackoverflow.
     private ProductService productService;
-    ProductController(ProductService productService)
-    {
-        this.productService=productService;
-    }
+    private CategoryService categoryService;
 
     @GetMapping()
     public List<Product> getAllProducts()
     {
+//        return selfProductService.getAllProducts();
     return  productService.getAllProducts();
 //        return "Getting All Products";
     }
 
     @GetMapping("/{productid}")
-    public ResponseEntity<GetSingleProductResponseDto> getSingleProduct(@PathVariable("productid") Long productid) throws NotFoundException {
+    public ResponseEntity<GetSingleProductResponseDto>  getSingleProduct(@PathVariable("productid") Long productid) throws NotFoundException {
         MultiValueMap<String,String> header= new LinkedMultiValueMap<>();
         header.add("auth-token","Sorry!No access");
         GetSingleProductResponseDto getSingleProductResponseDto= new GetSingleProductResponseDto();
-
-       Optional<Product> productoptional =  productService.getSingleProduct(productid);
-       if(productoptional.isEmpty())
-       {
-           throw new NotFoundException("No product exists on this Id");
-       }
+//       return  productService.getSingleProduct(productid);
+        Optional<Product> productoptional = productService.getSingleProduct(productid);
         getSingleProductResponseDto.setProduct(productoptional.get());
-       ResponseEntity<GetSingleProductResponseDto> response =
-               new ResponseEntity(getSingleProductResponseDto, header,HttpStatus.OK);
+        ResponseEntity<GetSingleProductResponseDto> response =
+                new ResponseEntity(getSingleProductResponseDto, header,HttpStatus.OK);
 
         return response;
+
     }
 
      @PostMapping ()
@@ -70,7 +74,10 @@ public class ProductController {
     {
 
         Product product= new Product();
-        product.setCategory(new Category());
+        Category category= new Category();
+//        categoryService.
+        product.setCategory(category);
+
         product.getCategory().setName(productsDto.getCategory());
         product.setTitle(productsDto.getTitle());
 
@@ -90,6 +97,8 @@ public class ProductController {
     {
         return "Deleting One Product : "+ productid;
     }
+
+
 
 
 }

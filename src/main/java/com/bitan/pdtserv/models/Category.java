@@ -1,8 +1,10 @@
 package com.bitan.pdtserv.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.BatchSize;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 
@@ -14,9 +16,14 @@ public class Category extends  Base{
     private  String name;
     private  String description;
     //mappedby is given to products, this is given to owning side(which deals with foreign key)
-    @OneToMany(mappedBy ="category", fetch = FetchType.LAZY)
-    @Fetch(FetchMode.SELECT)
+    @OneToMany(fetch = FetchType.EAGER,mappedBy ="category" ,cascade = {CascadeType.REMOVE})
+//    @Fetch(FetchMode.JOIN)
+//    @BatchSize(size = 2)
+    // batch size is used to reduce the number of queries
+    @JsonIgnore
     private List<Product> products;
+
+
 
 
 //    Hibernate: select c1_0.id,c1_0.created_at,c1_0.description,c1_0.isdeleted,c1_0.last_updated,c1_0.name from category c1_0 where c1_0.id in (?,?)

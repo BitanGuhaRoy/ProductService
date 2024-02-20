@@ -1,11 +1,13 @@
 package com.bitan.pdtserv.services;
 //import  org.apache.Cli
+import com.bitan.pdtserv.Exception.NotFoundException;
 import com.bitan.pdtserv.dtos.FakeStoreProductDto;
 import com.bitan.pdtserv.dtos.ProductsDto;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
 import org.springframework.boot.web.client.RestTemplateBuilder;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
@@ -29,7 +31,7 @@ import org.springframework.http.RequestEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 //Calling third party API, Fake Store
-@Service
+@Service("fakeStoreProduct")
 public class FakeStoreProductImpl implements ProductService{
 
     private RestTemplateBuilder restTemplateBuilder;
@@ -80,9 +82,9 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
     }
 
     @Override
-    public Optional<Product> getSingleProduct(Long productid) {
+    public Optional<Product> getSingleProduct(Long productid) throws NotFoundException {
 
-//        Product product= new Product();
+//    public Product getSingleProduct(Long productid) {
 
         RestTemplate restTemplate= restTemplateBuilder.build();
 
@@ -95,7 +97,8 @@ ResponseEntity<FakeStoreProductDto[]> listResponseEntity=
         Category category= new Category();
         if(fakeStoreProductDto==null)
         {
-            return Optional.empty();
+//            return Optional.empty();
+             return null;
         }
         category.setName(fakeStoreProductDto.getCategory());
         product.setCategory(category);
@@ -168,11 +171,13 @@ ResponseEntity<FakeStoreProductDto> fakeStoreProductDtoResponseEntity=
         product1.setDescription(productsDto.getDescription());
         return product1;
 
-//        return null;
+
     }
 
     @Override
     public Boolean deleteProduct(Long productid) {
         return null;
     }
+
+
 }

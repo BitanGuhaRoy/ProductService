@@ -4,6 +4,7 @@ import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
 import com.bitan.pdtserv.repository.CategoryRepository;
 import com.bitan.pdtserv.repository.ProductRepository;
+import com.bitan.pdtserv.services.SelfProductService;
 import jakarta.transaction.Transactional;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +19,12 @@ public class ProductTest {
     private ProductRepository productRepository;
     @Autowired
     private CategoryRepository categoryRepository;
+
+    @Autowired
+    private SelfProductService selfProductService;
     @Test
+//    @Transactional
+//    @Rollback(value = false)
     void savingProductsAndCategory()
     {
         Product product= new Product();
@@ -44,6 +50,8 @@ public class ProductTest {
     @Test
     @Transactional // by default this transaction is rolled back so add rollback false
     @Rollback(value = false)
+    // or
+    //commit()
     void saveProductsForCategory()
     {
         Product product= new Product();
@@ -78,7 +86,7 @@ public class ProductTest {
         //Eager loading
         Product product = productRepository.findProductById(1L);//corresponding category will also be fetched
         System.out.println("Product fetched");
-        product.getCategory();
+
     }
 
     @Test
@@ -98,5 +106,33 @@ public class ProductTest {
         }
 
 
+    }
+
+
+    @Test
+    void checkWorkingFine()
+    {
+
+        Product updatedProduct = selfProductService.updateProduct(1L, new Product());
+        if(updatedProduct!=null)
+        System.out.println(updatedProduct.getPrice());
+
+    }
+
+    @Test
+    
+    void customQueryTest()
+    {
+        Product product= productRepository.laaoProductwithid(2L);
+        System.out.println(product.getPrice());
+    }
+    @Test
+    void getAllPdt()
+    {
+        List<Product> products= selfProductService.getAllProducts();
+        for(Product product: products)
+        {
+            System.out.println(product.getPrice());
+        }
     }
 }
