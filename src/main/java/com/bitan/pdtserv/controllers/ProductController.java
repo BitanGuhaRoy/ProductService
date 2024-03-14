@@ -1,6 +1,11 @@
 package com.bitan.pdtserv.controllers;
 
 import com.bitan.pdtserv.Exception.NotFoundException;
+import com.bitan.pdtserv.clients.authenticationclient.AuthenticationClient;
+import com.bitan.pdtserv.clients.authenticationclient.dtos.ResponseValidateTokenRequestDto;
+import com.bitan.pdtserv.clients.authenticationclient.dtos.Role;
+import com.bitan.pdtserv.clients.authenticationclient.dtos.SessionStatus;
+import com.bitan.pdtserv.clients.authenticationclient.dtos.UserDto;
 import com.bitan.pdtserv.dtos.*;
 import com.bitan.pdtserv.models.Category;
 import com.bitan.pdtserv.models.Product;
@@ -13,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.Nullable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.*;
@@ -32,13 +38,46 @@ public class ProductController {
     // selfProductService is giving stackoverflow.
     private ProductService productService;
     private CategoryService categoryService;
+@Autowired
+    private AuthenticationClient authenticationClient;
 
+
+    // Make only admins be able to access all products
     @GetMapping()
-    public List<Product> getAllProducts()
+    public ResponseEntity<List<Product>> getAllProducts(@Nullable @RequestHeader("AUTH_TOKEN") String token,
+                                                        @Nullable @RequestHeader("USER_ID") Long userId)
+
     {
-//        return selfProductService.getAllProducts();
-    return  productService.getAllProducts();
-//        return "Getting All Products";
+        if(token==null || userId==null)
+        {
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        // validate the token
+//        RestTemplate restTemplate = new RestTemplate();
+//        String url = "http://localhost:9090/auth/validate";
+//       restTemplate.getForEntity( url, );
+
+
+       ResponseValidateTokenRequestDto responseValidateTokenRequestDto=
+               authenticationClient.validate(token, userId);
+
+if(responseValidateTokenRequestDto.getSessionStatus().equals(SessionStatus.INVALID))
+{
+    return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+}
+
+
+        UserDto userDto= responseValidateTokenRequestDto.getUserDto();
+
+for(Role role: userDto.getRoles())
+{
+    if(role.getName().equals("ADMIN"))
+    {
+        return  new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+    }
+}
+return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 
     @GetMapping("/{productid}")
