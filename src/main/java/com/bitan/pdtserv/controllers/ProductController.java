@@ -38,7 +38,7 @@ public class ProductController {
     // selfProductService is giving stackoverflow.
     private ProductService productService;
     private CategoryService categoryService;
-@Autowired
+    @Autowired
     private AuthenticationClient authenticationClient;
 
 
@@ -48,7 +48,34 @@ public class ProductController {
                                                         @Nullable @RequestHeader("USER_ID") Long userId)
 
     {
-        if(token==null || userId==null)
+
+        if(token==null || userId==null){
+            return  new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+        ResponseValidateTokenRequestDto responseValidateTokenRequestDto=
+                authenticationClient.validate(token, userId);
+
+
+        if(responseValidateTokenRequestDto.getSessionStatus().equals(SessionStatus.INVALID))
+        {
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+
+
+
+        UserDto userDto= responseValidateTokenRequestDto.getUserDto();
+        for(Role role: userDto.getRoles())
+        {
+            if(role.getName().equals("Admin"))
+            {
+                return  new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+     /*   if(token==null || userId==null)
         {
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
         }
@@ -78,6 +105,11 @@ for(Role role: userDto.getRoles())
     }
 }
 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+
+        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
+
+        */
     }
 
     @GetMapping("/{productid}")
