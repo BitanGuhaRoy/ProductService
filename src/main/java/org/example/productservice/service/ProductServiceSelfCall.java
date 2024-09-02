@@ -3,6 +3,8 @@ package org.example.productservice.service;
 import org.example.productservice.models.Product;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service("ProductServiceSelfCall")
 public class ProductServiceSelfCall implements ProductService{
     @Override
@@ -27,6 +29,11 @@ public class ProductServiceSelfCall implements ProductService{
 
     @Override
     public Boolean deleteProduct(Long id) {
+        return null;
+    }
+
+    @Override
+    public List<Product> getAllProducts() {
         return null;
     }
 }
