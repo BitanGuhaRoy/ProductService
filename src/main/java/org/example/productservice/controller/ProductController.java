@@ -1,5 +1,7 @@
 package org.example.productservice.controller;
 
+import org.example.productservice.exceptions.InvalidProductException;
+import org.example.productservice.exceptions.ProductDoesnotExistException;
 import org.example.productservice.models.Product;
 import org.example.productservice.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,7 +20,7 @@ import java.util.List;
 public class ProductController {
 
     @Autowired
-    @Qualifier("ProductServiceFakeStoreCall")
+    @Qualifier("ProductServiceSelfCall")
     private ProductService productService;
 
     @GetMapping("/{id}")
@@ -34,9 +36,7 @@ public class ProductController {
 //            return new ResponseEntity<>(product, HttpStatus.NOT_FOUND);
 //        }
         //@TODO: controller should not handle all these, controller advice comes into play, it is the final check point through which whatever controller is sending will be passed
-
         Product product= productService.getProductById(id);
-
         return new ResponseEntity<>(product, HttpStatus.OK);
 
 
@@ -51,6 +51,7 @@ public class ProductController {
     @PostMapping("")
     public Product createProduct(@RequestBody Product product)
     {
+
         return productService.createProduct(product);
     }
     @PatchMapping("/{id}")

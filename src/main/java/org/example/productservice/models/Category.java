@@ -15,8 +15,5 @@ import java.util.Set;
 @Setter
 @Entity
 public class Category extends  Base{
-
-    @OneToMany(mappedBy = "category",cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<Product> products;
     private String name;
 }

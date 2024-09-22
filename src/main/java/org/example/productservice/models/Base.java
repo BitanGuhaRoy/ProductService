@@ -14,8 +14,8 @@ import java.util.Date;
 @MappedSuperclass
 public class Base {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private  long id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private  Long id;
     private Date createdAt;
     private Date updatedAt;
     private boolean isDeleted;
