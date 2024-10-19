@@ -1,5 +1,7 @@
 package org.example.productservice.service;
 
+import org.example.productservice.dtos.ProductCreatedCategoryDto;
+import org.example.productservice.dtos.ProductCreatedResponseDto;
 import org.example.productservice.exceptions.ProductDoesnotExistException;
 import org.example.productservice.models.Category;
 import org.example.productservice.models.Product;
@@ -32,7 +34,7 @@ public class SelfProductService implements ProductService{
     }
 
     @Override
-    public Product createProduct(Product product) {
+    public ProductCreatedResponseDto createProduct(Product product) {
 
 
         if(product.getCategory().getId()==null)
@@ -52,7 +54,9 @@ public class SelfProductService implements ProductService{
             }
         }
 
-       return productRepository.save(product);
+       Product productCreated=  productRepository.save(product);
+
+        return toProductCreatedResponseDto(productCreated);
     }
 
     @Override
@@ -73,5 +77,19 @@ public class SelfProductService implements ProductService{
     @Override
     public List<Product> getAllProducts() {
         return null;
+    }
+
+    private ProductCreatedResponseDto toProductCreatedResponseDto(Product product)
+    {
+        ProductCreatedResponseDto productCreatedResponseDto = new ProductCreatedResponseDto();
+        productCreatedResponseDto.setId(product.getId());
+        productCreatedResponseDto.setName(product.getName());
+        productCreatedResponseDto.setDescription(product.getDescription());
+        productCreatedResponseDto.setPrice(product.getPrice());
+        productCreatedResponseDto.setImage(product.getImage());
+        ProductCreatedCategoryDto productCreatedCategoryDto = new ProductCreatedCategoryDto();
+        productCreatedCategoryDto.setName(product.getCategory().getName());
+        productCreatedResponseDto.setCategoryDto(productCreatedCategoryDto);
+        return productCreatedResponseDto;
     }
 }

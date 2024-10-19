@@ -2,6 +2,7 @@ package org.example.productservice.service;
 
 import org.apache.commons.logging.Log;
 import org.example.productservice.dtos.FakeStoreProductDto;
+import org.example.productservice.dtos.ProductCreatedResponseDto;
 import org.example.productservice.exceptions.InvalidProductException;
 import org.example.productservice.models.Product;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,8 +70,8 @@ public class ProductServiceFakeStoreCall implements  ProductService{
     }
 
 
-    public Product createProduct( Product product) {
-        return product;
+    public ProductCreatedResponseDto createProduct(Product product) {
+        return null;
     }
 
     public Product updateProduct(Long id , Product product) {

@@ -1,5 +1,6 @@
 package org.example.productservice.controller;
 
+import org.example.productservice.dtos.ProductCreatedResponseDto;
 import org.example.productservice.exceptions.InvalidProductException;
 import org.example.productservice.exceptions.ProductDoesnotExistException;
 import org.example.productservice.models.Product;
@@ -49,7 +50,7 @@ public class ProductController {
     }
 
     @PostMapping("")
-    public Product createProduct(@RequestBody Product product)
+    public ProductCreatedResponseDto createProduct(@RequestBody Product product)
     {
 
         return productService.createProduct(product);

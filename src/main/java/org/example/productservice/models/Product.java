@@ -3,6 +3,7 @@ package org.example.productservice.models;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 
 
 @Getter
@@ -13,7 +14,7 @@ public class Product  extends Base{
     private String description;
     private double price;
     private String image;
-    @ManyToOne
+    @ManyToOne( cascade = {CascadeType.PERSIST})
+    //(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Category category;
-
 }
