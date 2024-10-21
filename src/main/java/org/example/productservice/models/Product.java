@@ -14,6 +14,7 @@ public class Product  extends Base{
     private String description;
     private double price;
     private String image;
+    private int quantity;
     @ManyToOne( cascade = {CascadeType.PERSIST})
     //(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private Category category;
