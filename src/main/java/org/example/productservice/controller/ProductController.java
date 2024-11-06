@@ -1,6 +1,9 @@
 package org.example.productservice.controller;
 
+import org.example.productservice.configs.AuthenticationCommons;
+import org.example.productservice.dtos.GetAllProductRequestDto;
 import org.example.productservice.dtos.ProductCreatedResponseDto;
+import org.example.productservice.dtos.UserDto;
 import org.example.productservice.exceptions.InvalidProductException;
 import org.example.productservice.exceptions.ProductDoesnotExistException;
 import org.example.productservice.models.Product;
@@ -23,6 +26,8 @@ public class ProductController {
     @Autowired
     @Qualifier("ProductServiceSelfCall")
     private ProductService productService;
+    @Autowired
+    private AuthenticationCommons authenticationCommons;
 
     @GetMapping("/{id}")
     public ResponseEntity<Product> getProductById(@PathVariable("id") Long id) throws Exception
@@ -44,8 +49,19 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public List<Product> getAllProducts()
+    public List<Product> getAllProducts(@RequestBody GetAllProductRequestDto getAllProductRequestDto)
     {
+        String token = getAllProductRequestDto.getToken();
+        UserDto userDto = authenticationCommons.valiedateToken(token);
+        if(userDto==null)
+        {
+            Product product = new Product();
+            product.setName("Invalid Token");
+            List<Product> list = new ArrayList<>();
+            list.add(product);
+            return list;
+        }
+
         return productService.getAllProducts();
     }
 
