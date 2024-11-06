@@ -49,20 +49,16 @@ public class ProductController {
     }
 
     @GetMapping("")
-    public List<Product> getAllProducts(@RequestBody GetAllProductRequestDto getAllProductRequestDto)
+    public ResponseEntity<List<Product>> getAllProducts(@RequestBody GetAllProductRequestDto getAllProductRequestDto)
     {
         String token = getAllProductRequestDto.getToken();
         UserDto userDto = authenticationCommons.valiedateToken(token);
         if(userDto==null)
         {
-            Product product = new Product();
-            product.setName("Invalid Token");
-            List<Product> list = new ArrayList<>();
-            list.add(product);
-            return list;
+            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.UNAUTHORIZED);
         }
 
-        return productService.getAllProducts();
+        return new ResponseEntity<>(productService.getAllProducts(), HttpStatus.OK);
     }
 
     @PostMapping("")
